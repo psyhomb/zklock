@@ -71,15 +71,15 @@ args = argsParser()
 # Script name w/o extension
 script_name = os.path.splitext(os.path.basename(sys.argv[0]))[0]
 zk_server = args['server']
-zk_port = args['port']
+zk_port = int(args['port'])
 zk_lock_path = '/%s-%s/lock' % (script_name, args['project'])
 zk_status_path = '/%s-%s/status' % (script_name, args['project'])
-zk_lock_timeout = args['lock_timeout']
-zk_delay_exec = args['delay_exec']
+zk_lock_timeout = int(args['lock_timeout'])
+zk_delay_exec = int(args['delay_exec'])
 command = args['command']
 fqdn = getfqdn()
 
-zk = KazooClient('%s:%d' % (zk_server, int(zk_port)))
+zk = KazooClient('%s:%d' % (zk_server, zk_port))
 zk.start()
 
 lock = zk.Lock(zk_lock_path, fqdn)
@@ -87,7 +87,7 @@ lock = zk.Lock(zk_lock_path, fqdn)
 print 'Current lock contenders are: %s' % ', '.join(lock.contenders())
 
 try:
-  lock.acquire(blocking=True, timeout=int(zk_lock_timeout))
+  lock.acquire(blocking=True, timeout=zk_lock_timeout)
   print 'Lock successfully acquired\n'
 except kazoo.exceptions.LockTimeout as lt:
   print 'LockTimeout: %s' % lt
