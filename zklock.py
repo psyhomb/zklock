@@ -10,6 +10,7 @@
 # server = zookeeper.example.com
 # port = 2181
 # lock_timeout = 10
+# delay_exec = 1
 # project = test
 # command = service test restart
 
@@ -29,6 +30,7 @@ from ConfigParser import SafeConfigParser
 zk_server = '127.0.0.1'
 zk_port = 2181
 zk_lock_timeout = 10
+zk_delay_exec = 1
 
 
 def argsParser():
@@ -38,6 +40,7 @@ def argsParser():
   parser.add_argument('-s', '--server', help='Zookeeper server FQDN or IP', default=zk_server, dest='server', action='store')
   parser.add_argument('-p', '--port', help='Zookeeper server port', default=zk_port, type=int, dest='port', action='store')
   parser.add_argument('-t', '--lock-timeout', help='How long to wait to acquire lock', default=zk_lock_timeout, type=int, dest='lock_timeout', action='store')
+  parser.add_argument('-d', '--delay-exec', help='Delay command execution', default=zk_delay_exec, type=int, dest='delay_exec', action='store')
   parser.add_argument('-P', '--project', help='Project name', dest='project', action='store')
   parser.add_argument('-c', '--command', help='Command to run', dest='command', action='store')
 
@@ -72,6 +75,7 @@ zk_port = args['port']
 zk_lock_path = '/%s-%s/lock' % (script_name, args['project'])
 zk_status_path = '/%s-%s/status' % (script_name, args['project'])
 zk_lock_timeout = args['lock_timeout']
+zk_delay_exec = args['delay_exec']
 command = args['command']
 fqdn = getfqdn()
 
@@ -107,7 +111,7 @@ zk.set(zk_status_path, '%s' % json.dumps(d))
 
 
 #########################
-time.sleep(3)
+time.sleep(zk_delay_exec)
 output = cmd(command)
 print output['output']
 #########################

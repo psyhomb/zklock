@@ -25,6 +25,7 @@ Command line with configuration file
 server = zookeeper.example.com
 port = 2181
 lock_timeout = 10
+delay_exec = 1
 project = test
 command = service test restart
 ```
